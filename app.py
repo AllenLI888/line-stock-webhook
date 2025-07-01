@@ -1,6 +1,7 @@
 from flask import Flask, request
 import requests
 import json
+import os  # ✅ 千萬別漏掉這行！
 
 app = Flask(__name__)
 
@@ -44,6 +45,7 @@ def push_message():
     else:
         return f"推播失敗 ❌：{response.status_code} - {response.text}", 500
 
-
+# ✅ 加入正確的啟動語句（指定 port）
 if __name__ == "__main__":
-    app.run()
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
