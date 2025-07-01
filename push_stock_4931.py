@@ -62,10 +62,14 @@ def push_line_message(message):
 
 if __name__ == '__main__':
     stock_id = '4931'
-    info = get_stock_data(stock_id)
-    if info:
-        message = generate_message(stock_id, info)
-        print("✅ 推播訊息如下:\n", message)
-        push_line_message(message)
-    else:
-        print("❌ 無法取得股價資料")
+    
+    # 🔧 手動測試資料（避免官網尚未更新導致抓不到）
+    info = {
+        'date': '2025/06/28',
+        'close': '27.00',
+        'volume': '1200'
+    }
+
+    message = generate_message(stock_id, info)
+    print("✅ 推播訊息如下:\n", message)
+    push_line_message(message)
