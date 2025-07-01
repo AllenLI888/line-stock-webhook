@@ -56,13 +56,16 @@ def push_line_message(message):
             'text': message
         }]
     }
-    requests.post(url, headers=headers, json=body)
+    response = requests.post(url, headers=headers, json=body)
+    print("🔧 LINE API 回傳狀態碼:", response.status_code)
+    print("🔧 LINE API 回傳內容:", response.text)
 
 if __name__ == '__main__':
     stock_id = '4931'
     info = get_stock_data(stock_id)
     if info:
         message = generate_message(stock_id, info)
+        print("✅ 推播訊息如下:\n", message)
         push_line_message(message)
     else:
-        print("無法取得股價資料")
+        print("❌ 無法取得股價資料")
