@@ -1,0 +1,12 @@
+from flask import Flask, request
+
+app = Flask(__name__)
+
+@app.route("/callback", methods=["POST"])
+def callback():
+    data = request.get_json()
+    events = data.get("events", [])
+    if events:
+        user_id = events[0]["source"].get("userId", "未知")
+        print(f"✅ 收到使用者訊息，userId 為：{user_id}")
+    return "OK", 200
