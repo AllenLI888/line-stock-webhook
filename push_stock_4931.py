@@ -2,21 +2,28 @@ import requests
 import datetime
 import os
 
-def get_stock_data(stock_id):
-    today = datetime.datetime.now().strftime('%Y%m%d')
-    url = f'https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date={today}&stockNo={stock_id}'
-    response = requests.get(url)
-    data = response.json()
+def get_stock_data(stock_id, max_days=5):
+    base_date = datetime.datetime.now()
+    for i in range(max_days):
+        check_date = (base_date - datetime.timedelta(days=i)).strftime('%Y%m%d')
+        url = f'https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date={check_date}&stockNo={stock_id}'
+        response = requests.get(url)
+        data = response.json()
 
-    if data['stat'] != 'OK':
-        return None
+        if data.get('stat') != 'OK':
+            continue  # 該天沒資料，往前一天繼續找
 
-    last_entry = data['data'][-1]
-    return {
-        'date': last_entry[0],
-        'close': last_entry[6],
-        'volume': last_entry[1]
-    }
+        # 找最後一筆有效的日資料（通常是該月最後一日）
+        for row in reversed(data['data']):
+            if row[6] != '--':  # 收盤價欄不是空值
+                return {
+                    'date': row[0],
+                    'close': row[6],
+                    'volume': row[1]
+                }
+
+    return None  # 最多往前 max_days 天都找不到資料
+
 
 def predict_price(close_price):
     # 簡單模擬 AI 預測邏輯
